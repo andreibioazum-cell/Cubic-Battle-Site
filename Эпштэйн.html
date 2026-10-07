@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cubic Battle 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blue: #8ab4f8;
+    --blue-solid: #1a73e8;
+    --text: #e8eaed;
+    --text-soft: #9aa0a6;
+    --line: #3c4043;
+    --bg: #202124;
+    --bg-card: #292a2d;
+    --red: #f28b82;
+    --green: #81c995;
+    --green-bg: rgba(129,201,149,0.12);
+    --red-bg: rgba(242,139,130,0.12);
+  }
+
+  body {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body, .btn, .logo, h1, h2, label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  input[type="text"] { -webkit-user-select: text; user-select: text; }
+
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  header {
+    position: sticky;
+    top: 0;
+    background: #202124;
+    border-bottom: 1px solid var(--line);
+    z-index: 100;
+  }
+  .head-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: default;
+  }
+
+  .cube {
+    width: 22px;
+    height: 22px;
+    background: #000;
+    border-radius: 2px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .cube::before,
+  .cube::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    top: 6px;
+    border-radius: 1px;
+  }
+  .cube::before { left: 4px; }
+  .cube::after { right: 4px; }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background: var(--blue-solid);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 22px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    appearance: none;
+    box-shadow: none;
+    transition: none;
+  }
+  .btn:hover,
+  .btn:active,
+  .btn:focus,
+  .btn:focus-visible {
+    background: var(--blue-solid);
+    color: #fff;
+    outline: none;
+    box-shadow: none;
+    border: none;
+    text-decoration: none;
+  }
+  .btn.full { width: 100%; padding: 14px; }
+  .btn:disabled {
+    background: #3c4043;
+    color: #80868b;
+    cursor: not-allowed;
+  }
+
+  .hero {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 96px 24px 80px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 64px);
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+  .hero p {
+    font-size: 18px;
+    color: var(--text-soft);
+    max-width: 560px;
+    margin: 0 auto 40px;
+  }
+
+  .event {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px 96px;
+  }
+  .event-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 40px 32px;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .event-label {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #202124;
+    background: var(--blue);
+    padding: 4px 12px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  .event-card h2 {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  .event-card p {
+    font-size: 15px;
+    color: var(--text-soft);
+    max-width: 480px;
+    margin: 0 auto 28px;
+  }
+  .cube-exclusive {
+    width: 56px;
+    height: 56px;
+    background: #000;
+    border-radius: 4px;
+    position: relative;
+    margin: 0 auto 24px;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .cube-exclusive::before,
+  .cube-exclusive::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    top: 16px;
+    border-radius: 2px;
+  }
+  .cube-exclusive::before { left: 12px; }
+  .cube-exclusive::after { right: 12px; }
+
+  .update-section {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px 96px;
+  }
+  .update-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 40px 32px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .update-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: -0.3px;
+    margin-bottom: 24px;
+  }
+  .update-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .update-list li {
+    position: relative;
+    padding: 6px 0 6px 24px;
+    font-size: 15px;
+    color: var(--text-soft);
+    line-height: 1.5;
+  }
+  .update-list li::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 14px;
+    width: 6px;
+    height: 6px;
+    background: var(--blue);
+    border-radius: 50%;
+  }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .modal-overlay.show {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 40px 32px;
+    text-align: center;
+    width: 100%;
+    max-width: 560px;
+    position: relative;
+    margin: auto;
+    animation: modalIn 0.18s ease-out;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .modal-close {
+    display: none;
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    color: var(--text-soft);
+    font-size: 22px;
+    cursor: pointer;
+    border-radius: 50%;
+    line-height: 1;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    z-index: 10;
+  }
+  .modal-close.show {
+    display: flex;
+  }
+
+  .cube-big {
+    width: 72px;
+    height: 72px;
+    background: #000;
+    border-radius: 4px;
+    position: relative;
+    margin: 0 auto 24px;
+  }
+  .cube-big::before,
+  .cube-big::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    top: 20px;
+    border-radius: 2px;
+  }
+  .cube-big::before { left: 16px; }
+  .cube-big::after { right: 16px; }
+
+  .modal h1 {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  .modal .sub {
+    font-size: 14px;
+    color: var(--text-soft);
+    margin-bottom: 28px;
+  }
+
+  .form { text-align: left; }
+  .form label.field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-soft);
+    margin-bottom: 8px;
+  }
+  .form input[type="text"] {
+    width: 100%;
+    padding: 14px 16px;
+    background: #202124;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    margin-bottom: 8px;
+  }
+  .form input[type="text"]::placeholder { color: #5f6368; }
+
+  .nick-error {
+    display: none;
+    font-size: 13px;
+    color: var(--red);
+    margin-bottom: 12px;
+    text-align: left;
+  }
+  .nick-error.show { display: block; }
+
+  .timer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    background: #202124;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .timer-label {
+    font-size: 13px;
+    color: var(--text-soft);
+    letter-spacing: 0.3px;
+  }
+  .timer-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--blue);
+    font-variant-numeric: tabular-nums;
+    min-width: 34px;
+    text-align: right;
+  }
+  .timer-value.warning {
+    color: var(--red);
+  }
+
+  .timeout-block { display: none; text-align: center; }
+  .timeout-block.show { display: block; }
+
+  .timeout-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--red-bg);
+    color: var(--red);
+    font-size: 32px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    border: 2px solid var(--red);
+  }
+  .timeout-block h2 {
+    font-size: 22px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  .timeout-block p {
+    font-size: 15px;
+    color: var(--text-soft);
+    margin-bottom: 24px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: #202124;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--blue);
+    width: 0%;
+    transition: width 0.3s;
+  }
+
+  .question {
+    text-align: left;
+    margin-bottom: 24px;
+  }
+  .question-counter {
+    font-size: 12px;
+    color: var(--text-soft);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .question-text {
+    font-size: 17px;
+    color: #fff;
+    margin-bottom: 18px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #202124;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--text);
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .option .mark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #5f6368;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .option.selected {
+    border-color: var(--blue);
+    background: rgba(26,115,232,0.08);
+  }
+  .option.selected .mark {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+  .option.correct {
+    border-color: var(--green);
+    background: var(--green-bg);
+    color: var(--green);
+    cursor: default;
+  }
+  .option.correct .mark {
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .option.wrong {
+    border-color: var(--red);
+    background: var(--red-bg);
+    color: var(--red);
+    cursor: default;
+  }
+  .option.wrong .mark {
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .option.disabled {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .feedback {
+    display: none;
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: left;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok {
+    background: var(--green-bg);
+    color: var(--green);
+    border: 1px solid rgba(129,201,149,0.4);
+  }
+  .feedback.bad {
+    background: var(--red-bg);
+    color: var(--red);
+    border: 1px solid rgba(242,139,130,0.4);
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .nav-buttons .btn {
+    flex: 1;
+  }
+
+  .survey-result {
+    text-align: center;
+  }
+  .survey-result .score {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--blue);
+    line-height: 1;
+    margin: 20px 0 10px;
+  }
+  .survey-result .score-label {
+    font-size: 14px;
+    color: var(--text-soft);
+    margin-bottom: 24px;
+  }
+  .survey-result.failed .score { color: var(--red); }
+
+  .success-block { display: none; }
+  .success-block.show { display: block; }
+
+  .check-big {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #202124;
+    font-size: 28px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+  .success-block h2 {
+    font-size: 22px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  .success-block p {
+    font-size: 15px;
+    color: var(--text-soft);
+    margin-bottom: 20px;
+  }
+  .nick-shown {
+    display: inline-block;
+    padding: 8px 18px;
+    background: #202124;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+
+  footer {
+    border-top: 1px solid var(--line);
+  }
+  .foot-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+
+  @media (max-width: 640px) {
+    .head-inner { height: auto; padding: 12px 16px; }
+    .logo { font-size: 17px; }
+    .hero { padding: 56px 20px 48px; }
+    .event { padding: 0 20px 64px; }
+    .event-card { padding: 32px 24px; }
+    .update-section { padding: 0 20px 64px; }
+    .update-card { padding: 28px 20px; }
+    .modal { padding: 32px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <div class="logo">
+      <span class="cube"></span>
+      Cubic Battle 4
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>Cubic Battle 4</h1>
+  <p>2D шутер с видом сверху.</p>
+  <a href="#" class="btn">Скачать</a>
+</div>
+
+<div class="event">
+  <div class="event-card">
+    <span class="event-label">Событие идёт</span>
+    <div class="cube-exclusive"></div>
+    <h2>YA — YourAnswer</h2>
+    <p>Пройди событие и получи эксклюзивного куба, которого больше нигде не достать.</p>
+    <button class="btn" onclick="openModal()">Получить куба</button>
+  </div>
+</div>
+
+<!-- ТЕКУЩЕЕ ОБНОВЛЕНИЕ -->
+<div class="update-section">
+  <div class="update-card">
+    <div class="update-title">Обновление 1.1</div>
+    <ul class="update-list">
+      <li>Добавлено событие YA — YourAnswer с эксклюзивным кубом</li>
+      <li>Новая карта «Бункер» и дробовик</li>
+      <li>Исправлен баг с прохождением сквозь стены</li>
+      <li>Оптимизация сетевого кода — пинг ниже на 30%</li>
+    </ul>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-inner">
+    <div>© 2026 Cubic Battle 4</div>
+    <div><a href="#">Telegram</a></div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+
+    <button class="modal-close" id="modal-close" onclick="closeModal()" aria-label="Закрыть">×</button>
+
+    <!-- ЭКРАН 1: ФОРМА -->
+    <div id="step-form">
+      <div class="cube-big"></div>
+      <h1>Получить куба</h1>
+      <p class="sub">Введи свой ник в игре, чтобы получить эксклюзивного куба.</p>
+
+      <div class="form">
+        <label class="field-label" for="nick">Ник в игре</label>
+        <input
+          type="text"
+          id="nick"
+          placeholder="Например: CubikMaster"
+          maxlength="20"
+          autocomplete="off"
+        >
+        <div class="nick-error" id="nick-error">Введи ник</div>
+        <button type="button" class="btn full" id="btn-start">Продолжить</button>
+      </div>
+    </div>
+
+    <!-- ЭКРАН 2: ОПРОС -->
+    <div id="step-survey" style="display:none;">
+      <div class="timer-bar">
+        <span class="timer-label">Осталось времени</span>
+        <span class="timer-value" id="timer-value">40</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="question" id="question-block">
+        <div class="question-counter" id="question-counter">Вопрос 1 из 7</div>
+        <div class="question-text" id="question-text">—</div>
+        <div class="options" id="options"></div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="btn full" id="btn-next" disabled>Далее</button>
+      </div>
+    </div>
+
+    <!-- ЭКРАН 2b: ВРЕМЯ ВЫШЛО -->
+    <div id="step-timeout" class="timeout-block" style="display:none;">
+      <div class="timeout-icon">!</div>
+      <h2>Время вышло</h2>
+      <p>Не успел ответить за 40 секунд. Попробуй ещё раз.</p>
+      <button type="button" class="btn full" id="btn-timeout-retry">Попробовать снова</button>
+    </div>
+
+    <!-- ЭКРАН 3: РЕЗУЛЬТАТ -->
+    <div id="step-survey-result" style="display:none;">
+      <div class="survey-result" id="survey-result-block">
+        <div class="cube-big"></div>
+        <h2 id="survey-result-title">Результат</h2>
+        <div class="score" id="survey-score">0/7</div>
+        <div class="score-label" id="survey-score-label">правильных ответов</div>
+        <p id="survey-result-text" style="font-size:15px; color:var(--text-soft); margin-bottom:24px;">—</p>
+        <button type="button" class="btn full" id="survey-result-btn">Продолжить</button>
+      </div>
+    </div>
+
+    <!-- ЭКРАН 4: УСПЕХ -->
+    <div class="success-block" id="step-success">
+      <div class="check-big">✓</div>
+      <h2>Куб получен</h2>
+      <p>Куб выдан на ник:</p>
+      <div class="nick-shown" id="nick-shown">—</div>
+      <p style="font-size:13px; margin-bottom:20px;">Зайди в игру — куб уже в твоём инвентаре.</p>
+      <button class="btn full" onclick="closeModal()">Закрыть</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ============================================
+  // ЭЛЕМЕНТЫ
+  // ============================================
+  const modal = document.getElementById('modal');
+  const modalClose = document.getElementById('modal-close');
+  const stepForm = document.getElementById('step-form');
+  const stepSurvey = document.getElementById('step-survey');
+  const stepTimeout = document.getElementById('step-timeout');
+  const stepSurveyResult = document.getElementById('step-survey-result');
+  const stepSuccess = document.getElementById('step-success');
+
+  const nickInput = document.getElementById('nick');
+  const nickError = document.getElementById('nick-error');
+  const nickShown = document.getElementById('nick-shown');
+  const btnStart = document.getElementById('btn-start');
+
+  const timerValue = document.getElementById('timer-value');
+  const questionCounter = document.getElementById('question-counter');
+  const questionText = document.getElementById('question-text');
+  const optionsBox = document.getElementById('options');
+  const feedbackBox = document.getElementById('feedback');
+  const progressFill = document.getElementById('progress-fill');
+  const btnNext = document.getElementById('btn-next');
+  const btnTimeoutRetry = document.getElementById('btn-timeout-retry');
+
+  const surveyResultBlock = document.getElementById('survey-result-block');
+  const surveyResultTitle = document.getElementById('survey-result-title');
+  const surveyScore = document.getElementById('survey-score');
+  const surveyScoreLabel = document.getElementById('survey-score-label');
+  const surveyResultText = document.getElementById('survey-result-text');
+  const surveyResultBtn = document.getElementById('survey-result-btn');
+
+  // ============================================
+  // КОНСТАНТЫ
+  // ============================================
+  const TOTAL_TIME = 40;
+  const PASS_SCORE = 6;
+
+  // ============================================
+  // БАЗА ВОПРОСОВ
+  // ============================================
+  const BASE_QUESTIONS = [
+    {
+      q: 'Кто убил брата ради второй жизни?',
+      options: ['Азум', 'Бук', 'Я', 'Астра'],
+      correct: 0,
+      explain: 'Азум убил своего брата, чтобы получить вторую жизнь.'
+    },
+    {
+      q: 'Кто такой Бук?',
+      options: ['Главный злодей', 'Помощник героя', 'Оружие', 'Карта'],
+      correct: 0,
+      explain: 'Бук — главный злодей Cubic Battle 4.'
+    },
+    {
+      q: 'Кто такой CodeCracker?',
+      options: ['Помощник Бука', 'Главный герой', 'Девушка Азума', 'Оружие'],
+      correct: 0,
+      explain: 'CodeCracker — верный помощник Бука.'
+    },
+    {
+      q: 'Кто девушка Азума?',
+      options: ['Астра (Настя)', 'Бук', 'CodeCracker', 'Никто'],
+      correct: 0,
+      explain: 'Девушку Азума зовут Астра, её настоящее имя — Настя.'
+    },
+    {
+      q: 'Зачем Азум убил брата?',
+      options: ['Ради второй жизни', 'Из мести', 'Случайно', 'По приказу Бука'],
+      correct: 0,
+      explain: 'Азум пошёл на это ради второй жизни.'
+    },
+    {
+      q: 'Как зовут главного злодея?',
+      options: ['Бук', 'Азум', 'CodeCracker', 'Астра'],
+      correct: 0,
+      explain: 'Главный злодей — Бук.'
+    },
+    {
+      q: 'Кто три самых главных разраба игры?',
+      options: [
+        'Дима, Дима Сараев, Настя',
+        'Дима, Кирилл, Чипс'
+      ],
+      correct: 0,
+      explain: 'Главные разработчики — Дима, Дима Сараев и Настя.'
+    },
+  ];
+
+  // ============================================
+  // ПЕРЕМЕШИВАНИЕ
+  // ============================================
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function buildShuffledQuestions() {
+    const shuffledQuestions = shuffle(BASE_QUESTIONS);
+    return shuffledQuestions.map(q => {
+      const correctText = q.options[q.correct];
+      const shuffledOptions = shuffle(q.options);
+      const newCorrectIndex = shuffledOptions.indexOf(correctText);
+      return {
+        q: q.q,
+        options: shuffledOptions,
+        correct: newCorrectIndex,
+        explain: q.explain,
+      };
+    });
+  }
+
+  // ============================================
+  // СОСТОЯНИЕ
+  // ============================================
+  let currentNick = '';
+  let currentQuestion = 0;
+  let answers = [];
+  let correctCount = 0;
+  let answeredCurrent = false;
+  let timerInterval = null;
+  let timeLeft = TOTAL_TIME;
+  let QUESTIONS = [];
+
+  function resetSurveyState() {
+    QUESTIONS = buildShuffledQuestions();
+    currentQuestion = 0;
+    answers = new Array(QUESTIONS.length).fill(null);
+    correctCount = 0;
+    answeredCurrent = false;
+    timeLeft = TOTAL_TIME;
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function hideCloseButton() {
+    modalClose.classList.remove('show');
+  }
+
+  function showCloseButton() {
+    modalClose.classList.add('show');
+  }
+
+  // ============================================
+  // ТАЙМЕР
+  // ============================================
+  function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timeLeft = TOTAL_TIME;
+    updateTimerUI();
+
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimerUI();
+
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        onTimeout();
+      }
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function updateTimerUI() {
+    timerValue.textContent = timeLeft;
+    if (timeLeft <= 10) {
+      timerValue.classList.add('warning');
+    } else {
+      timerValue.classList.remove('warning');
+    }
+  }
+
+  function onTimeout() {
+    stopTimer();
+    resetSurveyState();
+
+    stepSurvey.style.display = 'none';
+    stepSurveyResult.style.display = 'none';
+    stepSuccess.classList.remove('show');
+
+    showCloseButton();
+
+    stepTimeout.style.display = 'block';
+    stepTimeout.classList.add('show');
+  }
+
+  // ============================================
+  // ОТРИСОВКА ВОПРОСА
+  // ============================================
+  function renderQuestion() {
+    const item = QUESTIONS[currentQuestion];
+    questionCounter.textContent = 'Вопрос ' + (currentQuestion + 1) + ' из ' + QUESTIONS.length;
+    questionText.textContent = item.q;
+
+    progressFill.style.width = ((currentQuestion) / QUESTIONS.length * 100) + '%';
+
+    optionsBox.innerHTML = '';
+    feedbackBox.className = 'feedback';
+    feedbackBox.textContent = '';
+
+    const chosen = answers[currentQuestion];
+    answeredCurrent = chosen !== null;
+
+    item.options.forEach((opt, i) => {
+      const el = document.createElement('div');
+      el.className = 'option';
+
+      if (answeredCurrent) {
+        el.classList.add('disabled');
+        if (i === item.correct) {
+          el.classList.add('correct');
+          el.innerHTML = '<span class="mark">✓</span><span>' + opt + '</span>';
+        } else if (i === chosen) {
+          el.classList.add('wrong');
+          el.innerHTML = '<span class="mark">✕</span><span>' + opt + '</span>';
+        } else {
+          el.innerHTML = '<span class="mark"></span><span>' + opt + '</span>';
+        }
+      } else {
+        el.innerHTML = '<span class="mark"></span><span>' + opt + '</span>';
+        el.addEventListener('click', () => selectOption(i));
+      }
+
+      optionsBox.appendChild(el);
+    });
+
+    if (answeredCurrent) {
+      const isCorrect = chosen === item.correct;
+      feedbackBox.classList.add('show', isCorrect ? 'ok' : 'bad');
+      feedbackBox.innerHTML = (isCorrect ? '✓ Верно. ' : '✕ Неверно. ') + item.explain;
+    }
+
+    btnNext.disabled = !answeredCurrent;
+    btnNext.textContent = currentQuestion === QUESTIONS.length - 1 ? 'Завершить' : 'Далее';
+  }
+
+  function selectOption(i) {
+    if (answeredCurrent) return;
+    answers[currentQuestion] = i;
+    renderQuestion();
+
+    if (currentQuestion === QUESTIONS.length - 1) {
+      stopTimer();
+    }
+  }
+
+  btnNext.addEventListener('click', () => {
+    if (answers[currentQuestion] === null) return;
+
+    if (currentQuestion < QUESTIONS.length - 1) {
+      currentQuestion++;
+      renderQuestion();
+    } else {
+      stopTimer();
+      finishSurvey();
+    }
+  });
+
+  // ============================================
+  // ЗАВЕРШЕНИЕ
+  // ============================================
+  function finishSurvey() {
+    stopTimer();
+
+    correctCount = 0;
+    QUESTIONS.forEach((q, i) => {
+      if (answers[i] === q.correct) correctCount++;
+    });
+
+    progressFill.style.width = '100%';
+
+    stepSurvey.style.display = 'none';
+    stepSurveyResult.style.display = 'block';
+
+    surveyScore.textContent = correctCount + '/' + QUESTIONS.length;
+    surveyScoreLabel.textContent = 'правильных ответов';
+
+    const passed = correctCount >= PASS_SCORE;
+
+    if (passed) {
+      hideCloseButton();
+
+      surveyResultBlock.classList.remove('failed');
+      surveyResultTitle.textContent = 'Отлично!';
+      surveyResultText.textContent = 'Ты настоящий фанат Cubic Battle 4. Куб твой.';
+      surveyResultBtn.textContent = 'Получить куба';
+      surveyResultBtn.onclick = showSuccess;
+    } else {
+      showCloseButton();
+
+      surveyResultBlock.classList.add('failed');
+      surveyResultTitle.textContent = 'Почти получилось';
+      surveyResultText.textContent = 'Нужно минимум 6 из ' + QUESTIONS.length + ' правильных. Попробуй ещё раз.';
+      surveyResultBtn.textContent = 'Пройти заново';
+      surveyResultBtn.onclick = restartSurvey;
+    }
+  }
+
+  function restartSurvey() {
+    hideCloseButton();
+    resetSurveyState();
+    stepSurveyResult.style.display = 'none';
+    stepTimeout.style.display = 'none';
+    stepTimeout.classList.remove('show');
+    stepSuccess.classList.remove('show');
+    stepSurvey.style.display = 'block';
+    renderQuestion();
+    startTimer();
+  }
+
+  function showSuccess() {
+    stopTimer();
+    hideCloseButton();
+    stepSurveyResult.style.display = 'none';
+    stepSuccess.classList.add('show');
+    nickShown.textContent = currentNick;
+  }
+
+  // ============================================
+  // МОДАЛКА
+  // ============================================
+  function openModal() {
+    hideCloseButton();
+    resetSurveyState();
+    stopTimer();
+
+    stepForm.style.display = 'block';
+    stepSurvey.style.display = 'none';
+    stepTimeout.style.display = 'none';
+    stepTimeout.classList.remove('show');
+    stepSurveyResult.style.display = 'none';
+    stepSuccess.classList.remove('show');
+
+    nickInput.value = '';
+    nickError.classList.remove('show');
+    currentNick = '';
+
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => nickInput.focus(), 150);
+  }
+
+  function closeModal() {
+    stopTimer();
+    resetSurveyState();
+    hideCloseButton();
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  // ============================================
+  // КНОПКА ПРОДОЛЖИТЬ → ОПРОС
+  // ============================================
+  btnStart.addEventListener('click', function() {
+    const nick = nickInput.value.trim();
+
+    if (!nick) {
+      nickError.classList.add('show');
+      nickInput.focus();
+      return;
+    }
+
+    nickError.classList.remove('show');
+    currentNick = nick;
+
+    hideCloseButton();
+
+    stepForm.style.display = 'none';
+    stepSurvey.style.display = 'block';
+    stepTimeout.style.display = 'none';
+    stepTimeout.classList.remove('show');
+    stepSurveyResult.style.display = 'none';
+    stepSuccess.classList.remove('show');
+
+    resetSurveyState();
+    renderQuestion();
+    startTimer();
+  });
+
+  btnTimeoutRetry.addEventListener('click', function() {
+    restartSurvey();
+  });
+
+  nickInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      btnStart.click();
+    }
+  });
+
+  // ============================================
+  // СБРОС ПРИ УХОДЕ СО ВКЛАДКИ
+  // ============================================
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      if (modal.classList.contains('show') && stepSurvey.style.display === 'block') {
+        stopTimer();
+        resetSurveyState();
+        hideCloseButton();
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+
+        stepForm.style.display = 'block';
+        stepSurvey.style.display = 'none';
+        stepTimeout.style.display = 'none';
+        stepTimeout.classList.remove('show');
+        stepSurveyResult.style.display = 'none';
+        stepSuccess.classList.remove('show');
+        nickInput.value = '';
+        currentNick = '';
+      }
+    }
+  });
+
+  window.addEventListener('blur', function() {
+    if (modal.classList.contains('show') && stepSurvey.style.display === 'block') {
+      stopTimer();
+    }
+  });
+
+  window.addEventListener('focus', function() {
+    if (modal.classList.contains('show') && stepSurvey.style.display === 'block') {
+      stopTimer();
+      resetSurveyState();
+      hideCloseButton();
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+
+      stepForm.style.display = 'block';
+      stepSurvey.style.display = 'none';
+      stepTimeout.style.display = 'none';
+      stepTimeout.classList.remove('show');
+      stepSurveyResult.style.display = 'none';
+      stepSuccess.classList.remove('show');
+      nickInput.value = '';
+      currentNick = '';
+    }
+  });
+</script>
+
+</body>
+  </html>
