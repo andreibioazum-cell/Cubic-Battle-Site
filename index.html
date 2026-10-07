@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="assets/css/layout.css" />
   <link rel="stylesheet" href="assets/css/components.css" />
   <link rel="stylesheet" href="assets/css/responsive.css" />
-  <script src="assets/js/event-quiz.js?v=2" defer></script>
+  <script src="assets/js/event-quiz.js?v=4" defer></script>
 </head>
 <body>
 
@@ -81,6 +81,20 @@
             autocomplete="off"
           >
           <div class="nick-error" id="nick-error">Введи ник</div>
+          <div class="captcha-section" id="captcha-section">
+            <div
+              id="recaptcha-widget"
+              class="recaptcha-widget"
+              data-sitekey="6LdasOMtAAAAAMDIKuk21_AGDxWpwk6IMgB50Rll"
+              aria-label="Проверка reCAPTCHA"
+            ></div>
+            <div class="captcha-message" id="captcha-message" role="status" aria-live="polite"></div>
+            <p class="captcha-note">
+              Защиту выполняет reCAPTCHA. Действуют
+              <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Политика конфиденциальности</a>
+              и <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Условия использования</a> Google.
+            </p>
+          </div>
           <button type="button" class="btn full" id="btn-start">Продолжить</button>
         </div>
       </div>
