@@ -32,6 +32,9 @@ const surveyScore = document.getElementById('survey-score');
 const surveyScoreLabel = document.getElementById('survey-score-label');
 const surveyResultText = document.getElementById('survey-result-text');
 const surveyResultBtn = document.getElementById('survey-result-btn');
+const captchaSection = document.getElementById('captcha-section');
+const recaptchaWidget = document.getElementById('recaptcha-widget');
+const captchaMessage = document.getElementById('captcha-message');
 
 // ============================================
 // КОНСТАНТЫ
@@ -128,6 +131,94 @@ let answeredCurrent = false;
 let timerInterval = null;
 let timeLeft = TOTAL_TIME;
 let QUESTIONS = [];
+let recaptchaWidgetId = null;
+let recaptchaLoadPromise = null;
+
+function setCaptchaMessage(message, type = 'error') {
+  captchaMessage.textContent = message;
+  captchaMessage.classList.toggle('show', Boolean(message));
+  captchaMessage.classList.toggle('info', type === 'info');
+}
+
+function loadRecaptchaApi() {
+  if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+    return Promise.resolve(window.grecaptcha);
+  }
+
+  if (recaptchaLoadPromise) return recaptchaLoadPromise;
+
+  recaptchaLoadPromise = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      if (!window.grecaptcha || typeof window.grecaptcha.render !== 'function') {
+        reject(new Error('reCAPTCHA API did not initialize'));
+        return;
+      }
+      resolve(window.grecaptcha);
+    };
+    script.onerror = () => reject(new Error('reCAPTCHA API failed to load'));
+    document.head.appendChild(script);
+  }).catch(error => {
+    recaptchaLoadPromise = null;
+    throw error;
+  });
+
+  return recaptchaLoadPromise;
+}
+
+async function renderRecaptchaWidget() {
+  const api = await loadRecaptchaApi();
+
+  // Render only after the modal and nickname form are visible.
+  if (!modal.classList.contains('show') || stepForm.style.display === 'none' || captchaSection.style.display === 'none') return;
+  if (recaptchaWidgetId !== null) return;
+
+  const siteKey = recaptchaWidget.dataset.sitekey;
+  if (!siteKey) throw new Error('reCAPTCHA site key is missing');
+
+  recaptchaWidgetId = api.render(recaptchaWidget, {
+    sitekey: siteKey,
+    size: 'compact',
+    tabindex: 0,
+    callback: () => setCaptchaMessage(''),
+    'expired-callback': () => setCaptchaMessage('Проверка reCAPTCHA истекла. Отметь её ещё раз.'),
+    'error-callback': () => setCaptchaMessage('reCAPTCHA не загрузилась. Проверь соединение и попробуй ещё раз.'),
+  });
+}
+
+function requestRecaptchaRender() {
+  setCaptchaMessage('Загружаем reCAPTCHA…', 'info');
+  renderRecaptchaWidget().then(() => {
+    setCaptchaMessage('');
+  }).catch(() => {
+    setCaptchaMessage('Не удалось загрузить reCAPTCHA. Проверь соединение и попробуй ещё раз.');
+  });
+}
+
+function resetRecaptchaWidget() {
+  if (recaptchaWidgetId !== null && window.grecaptcha && typeof window.grecaptcha.reset === 'function') {
+    window.grecaptcha.reset(recaptchaWidgetId);
+  }
+}
+
+async function verifyRecaptchaToken(token) {
+  const response = await fetch('/api/verify-recaptcha', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin',
+    body: JSON.stringify({ token }),
+  });
+
+  const result = await response.json().catch(() => ({}));
+  if (response.ok && result.verified === true) return;
+  if (result.error === 'CAPTCHA_FAILED') throw new Error('captcha-failed');
+  if (result.error === 'CAPTCHA_HOSTNAME_MISMATCH') throw new Error('hostname-mismatch');
+  if (result.error === 'CAPTCHA_NOT_CONFIGURED') throw new Error('configuration-missing');
+  throw new Error('verification-unavailable');
+}
 
 function resetSurveyState() {
   QUESTIONS = buildShuffledQuestions();
@@ -312,9 +403,85 @@ function finishSurvey() {
   }
 }
 
+async function startSurveyAfterCaptcha() {
+  if (btnStart.disabled) return;
+
+  const nick = nickInput.value.trim();
+  if (!nick) {
+    nickError.classList.add('show');
+    nickInput.focus();
+    return;
+  }
+
+  nickError.classList.remove('show');
+
+  if (recaptchaWidgetId === null) {
+    requestRecaptchaRender();
+    return;
+  }
+
+  if (!window.grecaptcha || typeof window.grecaptcha.getResponse !== 'function') {
+    setCaptchaMessage('Проверка reCAPTCHA ещё загружается. Попробуй ещё раз через секунду.', 'info');
+    return;
+  }
+
+  let token = '';
+  try {
+    token = window.grecaptcha.getResponse(recaptchaWidgetId);
+  } catch (error) {
+    setCaptchaMessage('Не удалось получить ответ reCAPTCHA. Обнови страницу и попробуй ещё раз.');
+    return;
+  }
+
+  if (!token) {
+    setCaptchaMessage('Подтверди reCAPTCHA, чтобы продолжить.');
+    return;
+  }
+
+  const buttonText = btnStart.textContent;
+  btnStart.disabled = true;
+  btnStart.textContent = 'Проверка…';
+  setCaptchaMessage('');
+
+  try {
+    await verifyRecaptchaToken(token);
+    resetRecaptchaWidget();
+    setCaptchaMessage('');
+    currentNick = nick;
+
+    hideCloseButton();
+    stepForm.style.display = 'none';
+    stepSurvey.style.display = 'block';
+    stepTimeout.style.display = 'none';
+    stepTimeout.classList.remove('show');
+    stepSurveyResult.style.display = 'none';
+    stepSuccess.classList.remove('show');
+
+    resetSurveyState();
+    renderQuestion();
+    startTimer();
+  } catch (error) {
+    resetRecaptchaWidget();
+    if (error.message === 'captcha-failed') {
+      setCaptchaMessage('Проверка reCAPTCHA не пройдена. Отметь её и попробуй ещё раз.');
+    } else if (error.message === 'hostname-mismatch') {
+      setCaptchaMessage('Домен сайта не разрешён в настройках reCAPTCHA. Проверь список доменов ключа.');
+    } else if (error.message === 'configuration-missing') {
+      setCaptchaMessage('Серверная проверка reCAPTCHA не настроена. Обратись к администратору.');
+    } else {
+      setCaptchaMessage('Сервис проверки временно недоступен. Попробуй позже.');
+    }
+  } finally {
+    btnStart.disabled = false;
+    btnStart.textContent = buttonText;
+  }
+}
+
 function restartSurvey() {
   hideCloseButton();
   resetSurveyState();
+  setCaptchaMessage('');
+  resetRecaptchaWidget();
   stepSurveyResult.style.display = 'none';
   stepTimeout.style.display = 'none';
   stepTimeout.classList.remove('show');
@@ -327,6 +494,7 @@ function restartSurvey() {
 function showSuccess() {
   stopTimer();
   hideCloseButton();
+  setCaptchaMessage('');
   stepSurveyResult.style.display = 'none';
   stepSuccess.classList.add('show');
   nickShown.textContent = currentNick;
@@ -339,6 +507,8 @@ function openModal() {
   hideCloseButton();
   resetSurveyState();
   stopTimer();
+  setCaptchaMessage('');
+  resetRecaptchaWidget();
 
   stepForm.style.display = 'block';
   stepSurvey.style.display = 'none';
@@ -353,6 +523,7 @@ function openModal() {
 
   modal.classList.add('show');
   document.body.style.overflow = 'hidden';
+  requestRecaptchaRender();
   setTimeout(() => nickInput.focus(), 150);
 }
 
@@ -360,6 +531,8 @@ function closeModal() {
   stopTimer();
   resetSurveyState();
   hideCloseButton();
+  setCaptchaMessage('');
+  resetRecaptchaWidget();
   modal.classList.remove('show');
   document.body.style.overflow = '';
 }
@@ -374,31 +547,7 @@ btnCloseSuccess.addEventListener('click', closeModal);
 // ============================================
 // КНОПКА ПРОДОЛЖИТЬ → ОПРОС
 // ============================================
-btnStart.addEventListener('click', function() {
-  const nick = nickInput.value.trim();
-
-  if (!nick) {
-    nickError.classList.add('show');
-    nickInput.focus();
-    return;
-  }
-
-  nickError.classList.remove('show');
-  currentNick = nick;
-
-  hideCloseButton();
-
-  stepForm.style.display = 'none';
-  stepSurvey.style.display = 'block';
-  stepTimeout.style.display = 'none';
-  stepTimeout.classList.remove('show');
-  stepSurveyResult.style.display = 'none';
-  stepSuccess.classList.remove('show');
-
-  resetSurveyState();
-  renderQuestion();
-  startTimer();
-});
+btnStart.addEventListener('click', startSurveyAfterCaptcha);
 
 btnTimeoutRetry.addEventListener('click', function() {
   restartSurvey();

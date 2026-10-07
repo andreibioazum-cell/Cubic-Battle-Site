@@ -439,6 +439,33 @@
 .survey-result {
   text-align: center;
 }
+.captcha-section {
+  margin: 0 0 20px;
+}
+.recaptcha-widget {
+  display: flex;
+  justify-content: center;
+  min-height: 0;
+}
+.captcha-message {
+  display: none;
+  margin-top: 10px;
+  color: var(--red);
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+}
+.captcha-message.show { display: block; }
+.captcha-message.info { color: var(--text-soft); }
+.captcha-note {
+  max-width: 360px;
+  margin: 10px auto 0;
+  color: var(--text-soft);
+  font-size: 11px;
+  line-height: 1.45;
+  text-align: center;
+}
+.captcha-note a { text-decoration: underline; }
 .survey-result .score {
   font-size: 48px;
   font-weight: 700;
