@@ -1,159 +1,140 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#f5f7f4" />
-  <meta name="description" content="Cubic Battle — кубические PvE-сражения, яркий игровой мир и онлайн-игра." />
-  <title>Cubic Battle — кубические сражения</title>
-  <link rel="icon" type="image/png" href="assets/images/cubic-battle-logo.png" />
-
-  <script>document.documentElement.classList.add('js');</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cubic Battle 4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/base.css" />
   <link rel="stylesheet" href="assets/css/layout.css" />
   <link rel="stylesheet" href="assets/css/components.css" />
   <link rel="stylesheet" href="assets/css/responsive.css" />
-  <script src="assets/js/navigation.js" defer></script>
+  <script src="assets/js/event-quiz.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Перейти к содержанию</a>
 
-  <header class="site-header">
-    <div class="container site-header__inner">
-      <a class="brand" href="#home" aria-label="Cubic Battle — главная">
-        <img src="assets/images/cubic-battle-logo.png" alt="" width="44" height="44" />
-        <span class="brand__name">Cubic <strong>Battle</strong></span>
-      </a>
-
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Открыть меню">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      <nav class="site-nav" id="primary-navigation" aria-label="Основная навигация">
-        <a href="#screenshots">Скриншот</a>
-        <a href="#features">Об игре</a>
-        <a href="#news">Новости</a>
-        <a class="button button--small" href="https://cloud.mail.ru/public/Mwpz/8FyLpXSjm" target="_blank" rel="noopener noreferrer">
-          Скачать игру
-        </a>
-      </nav>
+  <header>
+    <div class="head-inner">
+      <div class="logo">
+        <span class="cube"></span>
+        Cubic Battle 4
+      </div>
     </div>
   </header>
 
-  <main id="main">
-    <section class="hero" id="home" aria-labelledby="hero-title">
-      <div class="container hero__grid">
-        <div class="hero__copy">
-          <p class="eyebrow">Аркадные сражения · PvE</p>
-          <h1 id="hero-title">Врывайся<br /><span>Cubic Battle</span></h1>
-          <p class="hero__description">
-            Сражайся с кубами, собирай кубки и открывай для себя яркий игровой мир.
-          </p>
-          <div class="hero__actions">
-            <a class="button" href="https://cloud.mail.ru/public/Mwpz/8FyLpXSjm" target="_blank" rel="noopener noreferrer">
-              <svg aria-hidden="true" viewBox="0 0 20 20" width="18" height="18" fill="none">
-                <path d="M10 2.5v9m0 0 3.5-3.5M10 11.5 6.5 8M3.5 13.5v3h13v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              Скачать игру
-            </a>
-            <a class="button button--outline" href="#features">Об игре</a>
-          </div>
-        </div>
+  <div class="hero">
+    <h1>Cubic Battle 4</h1>
+    <p>2D шутер с видом сверху.</p>
+    <a href="#" class="btn">Скачать</a>
+  </div>
 
-        <figure class="hero__visual" id="screenshots">
-          <img
-            src="assets/images/gameplay-screenshot.png"
-            alt="Скриншот игрового процесса Cubic Battle: персонаж и кубы на зелёной арене"
-            width="1568"
-            height="768"
-            fetchpriority="high"
-          />
-          <figcaption>
-            <span>Игровой процесс</span>
-            <span>Cubic Battle</span>
-          </figcaption>
-        </figure>
-      </div>
-    </section>
+  <div class="event">
+    <div class="event-card">
+      <span class="event-label">Событие идёт</span>
+      <div class="cube-exclusive"></div>
+      <h2>YA — YourAnswer</h2>
+      <p>Пройди событие и получи эксклюзивного куба, которого больше нигде не достать.</p>
+      <button class="btn" id="btn-open-event" type="button">Получить куба</button>
+    </div>
+  </div>
 
-    <section class="section section--soft" id="features" aria-labelledby="features-title">
-      <div class="container">
-        <div class="section-heading">
-          <p class="eyebrow">Об игре</p>
-          <h2 id="features-title">Твой мир.<br />Твои сражения.</h2>
-          <p>Знакомься с Cubic Battle — простой в освоении игрой, в которую хочется возвращаться.</p>
-        </div>
+  <!-- ТЕКУЩЕЕ ОБНОВЛЕНИЕ -->
+  <div class="update-section">
+    <div class="update-card">
+      <div class="update-title">Обновление 1.1</div>
+      <ul class="update-list">
+        <li>Добавлено событие YA — YourAnswer с эксклюзивным кубом</li>
+        <li>Новая карта «Бункер» и дробовик</li>
+        <li>Исправлен баг с прохождением сквозь стены</li>
+        <li>Оптимизация сетевого кода — пинг ниже на 30%</li>
+      </ul>
+    </div>
+  </div>
 
-        <div class="feature-grid">
-          <article class="feature-card">
-            <span class="feature-card__index" aria-hidden="true">01</span>
-            <h3>PvE-сражения</h3>
-            <p>Сражайся с кубами в динамичных боях и пробуй снова, чтобы пройти дальше.</p>
-          </article>
-          <article class="feature-card">
-            <span class="feature-card__index" aria-hidden="true">02</span>
-            <h3>Кубический мир</h3>
-            <p>Яркая графика и необычные противники создают собственную атмосферу игры.</p>
-          </article>
-          <article class="feature-card">
-            <span class="feature-card__index" aria-hidden="true">03</span>
-            <h3>Игра онлайн</h3>
-            <p>Заходи в игру и проводи время в Cubic Battle вместе с другими игроками.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section news-section" id="news" aria-labelledby="news-title">
-      <div class="container news-layout">
-        <div class="section-heading">
-          <p class="eyebrow">Новости</p>
-          <h2 id="news-title">Что нового?</h2>
-          <p>Следи за обновлениями и событиями Cubic Battle.</p>
-        </div>
-
-        <article class="news-card">
-          <div class="news-card__meta">
-            <span class="news-card__tag">Обновление</span>
-            <time datetime="2026-04">Апрель 2026</time>
-          </div>
-          <h3>Cubic Battle v2.6</h3>
-          <p>Встречай пасхальный ивент в Cubic Battle. Скачивай игру и вступай в бой!</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="download-section" aria-labelledby="download-title">
-      <div class="container download-banner">
-        <div>
-          <p class="eyebrow eyebrow--light">Готов к игре?</p>
-          <h2 id="download-title">Увидимся на арене.</h2>
-        </div>
-        <a class="button button--light" href="https://cloud.mail.ru/public/Mwpz/8FyLpXSjm" target="_blank" rel="noopener noreferrer">
-          Скачать Cubic Battle
-          <svg aria-hidden="true" viewBox="0 0 20 20" width="18" height="18" fill="none">
-            <path d="M10 2.5v9m0 0 3.5-3.5M10 11.5 6.5 8M3.5 13.5v3h13v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </a>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container site-footer__inner">
-      <a class="brand brand--footer" href="#home">
-        <img src="assets/images/cubic-battle-logo.png" alt="" width="36" height="36" />
-        <span class="brand__name">Cubic <strong>Battle</strong></span>
-      </a>
-      <nav class="footer-nav" aria-label="Навигация в подвале">
-        <a href="#screenshots">Скриншот</a>
-        <a href="#features">Об игре</a>
-        <a href="#news">Новости</a>
-      </nav>
-      <p class="site-footer__copyright">© 2026 Cubic Battle</p>
+  <footer>
+    <div class="foot-inner">
+      <div>© 2026 Cubic Battle 4</div>
+      <div><a href="#">Telegram</a></div>
     </div>
   </footer>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+
+      <button class="modal-close" id="modal-close" type="button" aria-label="Закрыть">×</button>
+
+      <!-- ЭКРАН 1: ФОРМА -->
+      <div id="step-form">
+        <div class="cube-big"></div>
+        <h1>Получить куба</h1>
+        <p class="sub">Введи свой ник в игре, чтобы получить эксклюзивного куба.</p>
+
+        <div class="form">
+          <label class="field-label" for="nick">Ник в игре</label>
+          <input
+            type="text"
+            id="nick"
+            placeholder="Например: CubikMaster"
+            maxlength="20"
+            autocomplete="off"
+          >
+          <div class="nick-error" id="nick-error">Введи ник</div>
+          <button type="button" class="btn full" id="btn-start">Продолжить</button>
+        </div>
+      </div>
+
+      <!-- ЭКРАН 2: ОПРОС -->
+      <div id="step-survey" style="display:none;">
+        <div class="timer-bar">
+          <span class="timer-label">Осталось времени</span>
+          <span class="timer-value" id="timer-value">40</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="question" id="question-block">
+          <div class="question-counter" id="question-counter">Вопрос 1 из 7</div>
+          <div class="question-text" id="question-text">—</div>
+          <div class="options" id="options"></div>
+          <div class="feedback" id="feedback"></div>
+        </div>
+        <div class="nav-buttons">
+          <button type="button" class="btn full" id="btn-next" disabled>Далее</button>
+        </div>
+      </div>
+
+      <!-- ЭКРАН 2b: ВРЕМЯ ВЫШЛО -->
+      <div id="step-timeout" class="timeout-block" style="display:none;">
+        <div class="timeout-icon">!</div>
+        <h2>Время вышло</h2>
+        <p>Не успел ответить за 40 секунд. Попробуй ещё раз.</p>
+        <button type="button" class="btn full" id="btn-timeout-retry">Попробовать снова</button>
+      </div>
+
+      <!-- ЭКРАН 3: РЕЗУЛЬТАТ -->
+      <div id="step-survey-result" style="display:none;">
+        <div class="survey-result" id="survey-result-block">
+          <div class="cube-big"></div>
+          <h2 id="survey-result-title">Результат</h2>
+          <div class="score" id="survey-score">0/7</div>
+          <div class="score-label" id="survey-score-label">правильных ответов</div>
+          <p id="survey-result-text" style="font-size:15px; color:var(--text-soft); margin-bottom:24px;">—</p>
+          <button type="button" class="btn full" id="survey-result-btn">Продолжить</button>
+        </div>
+      </div>
+
+      <!-- ЭКРАН 4: УСПЕХ -->
+      <div class="success-block" id="step-success">
+        <div class="check-big">✓</div>
+        <h2>Куб получен</h2>
+        <p>Куб выдан на ник:</p>
+        <div class="nick-shown" id="nick-shown">—</div>
+        <p style="font-size:13px; margin-bottom:20px;">Зайди в игру — куб уже в твоём инвентаре.</p>
+        <button class="btn full" id="btn-close-success" type="button">Закрыть</button>
+      </div>
+
+    </div>
+  </div>
+
 </body>
 </html>
